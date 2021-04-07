@@ -33,7 +33,7 @@ from PIL import Image
 
         
 scriptDir=dirname(realpath(__file__))
-From_Main,_= loadUiType(join(dirname(__file__),"main (1).ui"))
+From_Main,_= loadUiType(join(dirname(__file__),"task1.ui"))
 
 
 class mainwind(QMainWindow,From_Main):
@@ -540,6 +540,8 @@ class mainwind(QMainWindow,From_Main):
             self.x=np.array(df[0])
             self.y=np.array(df[1]) 
             xrange, yrange = self.sc.viewRange()
+            
+            print(xrange,self.x[-1])
             self.sc.setXRange(xrange[0]/5, xrange[1]/5, padding=0)
             pen = pg.mkPen(color=(50, 50, 250))
             self.sc.plot(self.x, self.y, pen=pen)
@@ -547,14 +549,20 @@ class mainwind(QMainWindow,From_Main):
     def scrollR(self):
         xrange, yrange = self.sc.viewRange()
         scrollvalue = (xrange[1] - xrange[0])/10
-        self.sc.setXRange(xrange[0]+scrollvalue, xrange[1]+scrollvalue, padding=0)
-        # self.sc.setYrange(yrange[0],yrange[1], padding=0)
+        if xrange[1] < self.max:
+            self.sc.setXRange(xrange[0]+scrollvalue, xrange[1]+scrollvalue, padding=0)
+            # self.sc.setYrange(yrange[0],yrange[1], padding=0)
+        else:
+            pass
 
     def scrollL(self):
         xrange, yrange = self.sc.viewRange()
         scrollvalue = (xrange[1] - xrange[0])/10
-        self.sc.setXRange(xrange[0]-scrollvalue, xrange[1]-scrollvalue, padding=0)
-        # self.sc.setYrange(yrange[0],yrange[1], padding=0)
+        if xrange[0]>self.min:
+            self.sc.setXRange(xrange[0]-scrollvalue, xrange[1]-scrollvalue, padding=0)
+        else:
+            pass
+         # self.sc.setYrange(yrange[0],yrange[1], padding=0)
 
     def zoomin(self):
         xrange, yrange = self.sc.viewRange()
@@ -571,12 +579,16 @@ class mainwind(QMainWindow,From_Main):
     
     def dynamicSig(self):
         self.timer = QtCore.QTimer()
-        self.timer.setInterval(50)
+        self.timer.setInterval(2)
         self.timer.timeout.connect(self.dynamicSig)
         self.timer.start()
         xrange, yrange = self.sc.viewRange()
         scrollvalue = (xrange[1] - xrange[0])/500
-        self.sc.setXRange(xrange[0]+scrollvalue, xrange[1]+scrollvalue, padding=0)
+        if xrange[1]< self.max:
+            self.sc.setXRange(xrange[0]+scrollvalue, xrange[1]+scrollvalue, padding=0)
+        else:
+            pass
+            
 
     def pauseSignal(self):
         self.timer.stop()
