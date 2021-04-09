@@ -412,8 +412,13 @@ class sigviewer(QMainWindow,From_Main1):
         importAction=QAction("Import Events...", self)
         file_menu.addAction(importAction)
 
-        infoAction=QAction(QIcon("info.png"), "Info...", self)
-        file_menu.addAction(infoAction)
+        # infoAction=QAction(QIcon("info.png"), "Info...", self)
+        # file_menu.addAction(infoAction)
+
+        newAction=QAction(QIcon("info.png"), "open signals viewer", self)
+        file_menu.addAction(newAction)
+        newAction.triggered.connect(mainwind.viewsigviewer)
+        newAction.setShortcut("alt+n")
 
         closeAction=QAction(QIcon("close.png"), "Close", self)
         file_menu.addAction(closeAction)
@@ -1456,9 +1461,9 @@ class mainwind(QMainWindow,From_Main):
         fig.savefig("x.pdf")   
 
     def viewsigviewer(self):
-        self.new=sigviewer()
-        self.new.show()
-        self.new.setWindowTitle("viewsignals")
+        new=sigviewer()
+        new.show()
+        new.setWindowTitle("viewsignals")
 
 app = QApplication(sys.argv)
 sheet= mainwind()
