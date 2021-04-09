@@ -36,10 +36,10 @@ scriptDir=dirname(realpath(__file__))
 From_Main,_= loadUiType(join(dirname(__file__),"task1.ui"))
 
 
-class mainwind(QMainWindow,From_Main):
+class sigviewer(QMainWindow,From_Main):
 
     def __init__(self):
-        super(mainwind, self).__init__()
+        super(sigviewer, self).__init__()
         QMainWindow.__init__(self)
         self.setupUi(self)
         self.setGeometry(0, 0, 1350, 690)
@@ -57,6 +57,7 @@ class mainwind(QMainWindow,From_Main):
         self.y=[]
         self.y1=[]
         self.y2=[]
+        
 
         self.l=QVBoxLayout(self.graphicsView)
         self.l.setGeometry(QtCore.QRect(10, 5, 571, 150))
@@ -84,7 +85,6 @@ class mainwind(QMainWindow,From_Main):
         self.label2.setGeometry(QtCore.QRect(660,420,600,191))
         self.label2.setText("")
         self.label2.setStyleSheet("background-color: white")  
-
 
     def init_UI(self):     
         
@@ -530,7 +530,6 @@ class mainwind(QMainWindow,From_Main):
         help_menu = menuBar.addMenu('help')
         help_menu.addAction('Quit',self.close)       
 
-
     ###CHANNEL 1 FUNCTIONS###
 
     def OpenBrowse(self):
@@ -540,8 +539,9 @@ class mainwind(QMainWindow,From_Main):
             self.x=np.array(df[0])
             self.y=np.array(df[1]) 
             xrange, yrange = self.sc.viewRange()
-            
-            print(xrange,self.x[-1])
+            self.min=self.x[0]
+            self.max=self.x[-1]
+            # print(xrange,self.x[-1])
             self.sc.setXRange(xrange[0]/5, xrange[1]/5, padding=0)
             pen = pg.mkPen(color=(50, 50, 250))
             self.sc.plot(self.x, self.y, pen=pen)
@@ -551,7 +551,6 @@ class mainwind(QMainWindow,From_Main):
         scrollvalue = (xrange[1] - xrange[0])/10
         if xrange[1] < self.max:
             self.sc.setXRange(xrange[0]+scrollvalue, xrange[1]+scrollvalue, padding=0)
-            # self.sc.setYrange(yrange[0],yrange[1], padding=0)
         else:
             pass
 
@@ -562,20 +561,21 @@ class mainwind(QMainWindow,From_Main):
             self.sc.setXRange(xrange[0]-scrollvalue, xrange[1]-scrollvalue, padding=0)
         else:
             pass
-         # self.sc.setYrange(yrange[0],yrange[1], padding=0)
 
     def zoomin(self):
         xrange, yrange = self.sc.viewRange()
-        # self.sc.setYRange(yrange[0]/2, yrange[1]/2, padding=0)
         self.sc.setXRange(xrange[0]/2, xrange[1]/2, padding=0)
 
-    def zoomout(self):
+    def zoomout(self): 
         xrange, yrange = self.sc.viewRange()
-        # self.sc.setYRange(yrange[0]*2, yrange[1]*2, padding=0)
-        self.sc.setXRange(xrange[0]*2, xrange[1]*2, padding=0)
+        if xrange[1]<((0.5*self.max)+1):
+            self.sc.setXRange(xrange[0]*2, xrange[1]*2, padding=0)
+        else:
+            pass
 
     def clear(self):
         self.sc.clear()
+        self.sc.setXRange(0, 1, padding=0)
     
     def dynamicSig(self):
         self.timer = QtCore.QTimer()
@@ -589,7 +589,6 @@ class mainwind(QMainWindow,From_Main):
         else:
             pass
             
-
     def pauseSignal(self):
         self.timer.stop()
 
@@ -666,12 +665,18 @@ class mainwind(QMainWindow,From_Main):
     def scrollR1(self):
         xrange, yrange = self.sc1.viewRange()
         scrollvalue = (xrange[1] - xrange[0])/10
-        self.sc1.setXRange(xrange[0]+scrollvalue, xrange[1]+scrollvalue, padding=0)
+        if xrange[1] < self.max1:
+            self.sc1.setXRange(xrange[0]+scrollvalue, xrange[1]+scrollvalue, padding=0)
+        else:
+            pass
     
     def scrollL1(self):
         xrange, yrange = self.sc1.viewRange()
         scrollvalue = (xrange[1] - xrange[0])/10
-        self.sc1.setXRange(xrange[0]-scrollvalue, xrange[1]-scrollvalue, padding=0)
+        if xrange[0]>self.min1:
+            self.sc1.setXRange(xrange[0]-scrollvalue, xrange[1]-scrollvalue, padding=0)
+        else:
+            pass
         
     def zoomin1(self):
         xrange, yrange = self.sc1.viewRange()
@@ -679,7 +684,10 @@ class mainwind(QMainWindow,From_Main):
 
     def zoomout1(self):
         xrange, yrange = self.sc1.viewRange()
-        self.sc1.setXRange(xrange[0]*2, xrange[1]*2, padding=0)
+        if xrange[1]<((0.5*self.max1)+1):
+            self.sc1.setXRange(xrange[0]*2, xrange[1]*2, padding=0)
+        else:
+            pass
 
     def OpenBrowse1(self):
         self.fileName1, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","CSV Files (*.csv)")
@@ -688,12 +696,15 @@ class mainwind(QMainWindow,From_Main):
             self.x1=np.array(df[0])
             self.y1=np.array(df[1]) 
             xrange, yrange = self.sc1.viewRange()
+            self.min1=self.x1[0]
+            self.max1=self.x1[-1]
             self.sc1.setXRange(xrange[0]/5, xrange[1]/5, padding=0)
             pen = pg.mkPen(color=(50, 50, 250))
             self.sc1.plot(self.x1, self.y1, pen=pen)
 
     def clear1(self):
         self.sc1.clear()
+        self.sc1.setXRange(0, 1, padding=0)
 
     def dynamicSig1(self):
         # self.clear()
@@ -703,7 +714,10 @@ class mainwind(QMainWindow,From_Main):
         self.timer1.start()
         xrange, yrange = self.sc1.viewRange()
         scrollvalue = (xrange[1] - xrange[0])/500
-        self.sc1.setXRange(xrange[0]+scrollvalue, xrange[1]+scrollvalue, padding=0)
+        if xrange[1]< self.max1:
+            self.sc1.setXRange(xrange[0]+scrollvalue, xrange[1]+scrollvalue, padding=0)
+        else:
+            pass
 
     def pauseSignal1(self):
         self.timer1.stop()
@@ -781,12 +795,18 @@ class mainwind(QMainWindow,From_Main):
     def scrollR2(self):
         xrange, yrange = self.sc2.viewRange()
         scrollvalue = (xrange[1] - xrange[0])/10
-        self.sc2.setXRange(xrange[0]+scrollvalue, xrange[1]+scrollvalue, padding=0)
+        if xrange[1] < self.max2:
+            self.sc2.setXRange(xrange[0]+scrollvalue, xrange[1]+scrollvalue, padding=0)
+        else:
+            pass
 
     def scrollL2(self):
         xrange, yrange = self.sc2.viewRange()
         scrollvalue = (xrange[1] - xrange[0])/10
-        self.sc2.setXRange(xrange[0]-scrollvalue, xrange[1]-scrollvalue, padding=0)
+        if xrange[0]>self.min2:
+            self.sc2.setXRange(xrange[0]-scrollvalue, xrange[1]-scrollvalue, padding=0)
+        else:
+            pass
 
     def zoomin2(self):
         xrange, yrange = self.sc2.viewRange()
@@ -794,7 +814,10 @@ class mainwind(QMainWindow,From_Main):
 
     def zoomout2(self):
         xrange, yrange = self.sc2.viewRange()
-        self.sc2.setXRange(xrange[0]*2, xrange[1]*2, padding=0)
+        if xrange[1]<((0.5*self.max2)+1):
+            self.sc2.setXRange(xrange[0]*2, xrange[1]*2, padding=0)
+        else:
+            pass
 
     def OpenBrowse2(self):
         self.fileName2, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","CSV Files (*.csv)")
@@ -802,6 +825,8 @@ class mainwind(QMainWindow,From_Main):
             df=pd.read_csv(self.fileName2,header=None)
             self.x2=np.array(df[0])
             self.y2=np.array(df[1]) 
+            self.min2=self.x2[0]
+            self.max2=self.x2[-1]
             xrange, yrange = self.sc2.viewRange()
             self.sc2.setXRange(xrange[0]/5, xrange[1]/5, padding=0)
             pen = pg.mkPen(color=(50, 50, 250))
@@ -809,6 +834,7 @@ class mainwind(QMainWindow,From_Main):
     
     def clear2(self):
         self.sc2.clear()
+        self.sc2.setXRange(0, 1, padding=0)
 
     def dynamicSig2(self):
         # self.clear()
@@ -818,7 +844,10 @@ class mainwind(QMainWindow,From_Main):
         self.timer2.start()
         xrange, yrange = self.sc2.viewRange()
         scrollvalue = (xrange[1] - xrange[0])/500
-        self.sc2.setXRange(xrange[0]+scrollvalue, xrange[1]+scrollvalue, padding=0)
+        if xrange[1]< self.max2:
+            self.sc2.setXRange(xrange[0]+scrollvalue, xrange[1]+scrollvalue, padding=0)
+        else:
+            pass
 
     def pauseSignal2(self):
         self.timer2.stop()
@@ -894,6 +923,7 @@ class mainwind(QMainWindow,From_Main):
 
 
      ##save to pdf function##
+   # save as pdf 
     def savepdf(self):
         fig=plot.figure()
 
@@ -932,7 +962,7 @@ class mainwind(QMainWindow,From_Main):
 
 
 app = QApplication(sys.argv)
-sheet= mainwind()
+sheet= sigviewer()
 sheet.show()
 sheet.setWindowTitle("Sigviewer")
 sheet.setWindowIcon(QIcon("icon.png"))
