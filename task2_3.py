@@ -92,6 +92,9 @@ class sigviewer(QMainWindow,From_Main1):
         self.label2.setText("")
         self.label2.setStyleSheet("background-color: white")  
 
+
+        
+
     def init_UI(self):     
         
         self.createpdf = QtWidgets.QPushButton(self.centralwidget)
@@ -100,6 +103,7 @@ class sigviewer(QMainWindow,From_Main1):
         self.createpdf.setObjectName("pdf")
         self.createpdf.setShortcut("Ctrl+F")
         self.createpdf.clicked.connect(lambda: self.savepdf())
+        
 
 
         #  channel 1
@@ -1008,6 +1012,92 @@ class mainwind(QMainWindow,From_Main):
         self.label2.setGeometry(QtCore.QRect(660,420,600,191))
         self.label2.setText("")
         self.label2.setStyleSheet("background-color: white")  
+
+        self.sl1 = QSlider(Qt.Vertical,self)
+        self.sl1.setGeometry(34, -15, 15, 189)
+        self.sl1.setMinimum(0)
+        self.sl1.setMaximum(5)
+        self.sl1.setValue(1)
+        self.sl1.setTickPosition(QSlider.TicksBelow)
+        self.sl1.setTickInterval(5)
+
+
+
+        # self.sl2 = QSlider(Qt.Vertical)
+        # self.sl2.setGeometry(88, 1, 15, 189)
+        # self.sl2.setMinimum(0)
+        # self.sl2.setMaximum(5)
+        # self.sl2.setValue(1)
+        # self.sl2.setTickPosition(QSlider.TicksBelow)
+        # self.sl2.setTickInterval(5)
+
+        # self.sl3 = QSlider(Qt.Vertical)
+        # self.sl3.setGeometry(142, 1, 15, 189)
+        # self.sl3.setMinimum(0)
+        # self.sl3.setMaximum(5)
+        # self.sl3.setValue(1)
+        # self.sl3.setTickPosition(QSlider.TicksBelow)
+        # self.sl3.setTickInterval(5)
+
+        # self.sl4 = QSlider(Qt.Vertical)
+        # self.sl4.setGeometry(196, 1, 15, 189)
+        # self.sl4.setMinimum(0)
+        # self.sl4.setMaximum(5)
+        # self.sl4.setValue(1)
+        # self.sl4.setTickPosition(QSlider.TicksBelow)
+        # self.sl4.setTickInterval(5)
+
+        # self.sl5 = QSlider(Qt.Vertical)
+        # self.sl5.setGeometry(250, 1, 15, 189)
+        # self.sl5.setMinimum(0)
+        # self.sl5.setMaximum(5)
+        # self.sl5.setValue(1)
+        # self.sl5.setTickPosition(QSlider.TicksBelow)
+        # self.sl5.setTickInterval(5)
+
+        # self.sl6 = QSlider(Qt.Vertical)
+        # self.sl6.setGeometry(304, 1, 15, 189)
+        # self.sl6.setMinimum(0)
+        # self.sl6.setMaximum(5)
+        # self.sl6.setValue(1)
+        # self.sl6.setTickPosition(QSlider.TicksBelow)
+        # self.sl6.setTickInterval(5)
+
+        # self.sl7 = QSlider(Qt.Vertical)
+        # self.sl7.setGeometry(358, 1, 15, 189)
+        # self.sl7.setMinimum(0)
+        # self.sl7.setMaximum(5)
+        # self.sl7.setValue(1)
+        # self.sl7.setTickPosition(QSlider.TicksBelow)
+        # self.sl7.setTickInterval(5)
+
+        # self.sl8 = QSlider(Qt.Vertical)
+        # self.sl8.setGeometry(412, 1, 15, 189)
+        # self.sl8.setMinimum(0)
+        # self.sl8.setMaximum(5)
+        # self.sl8.setValue(1)
+        # self.sl8.setTickPosition(QSlider.TicksBelow)
+        # self.sl8.setTickInterval(5)
+
+        # self.sl9 = QSlider(Qt.Vertical)
+        # self.sl9.setGeometry(466, 1, 15, 189)
+        # self.sl9.setMinimum(0)
+        # self.sl9.setMaximum(5)
+        # self.sl9.setValue(1)
+        # self.sl9.setTickPosition(QSlider.TicksBelow)
+        # self.sl9.setTickInterval(5)
+
+        # self.sl10 = QSlider(Qt.Vertical)
+        # self.sl10.setGeometry(5201, 1, 15, 189)
+        # self.sl10.setMinimum(0)
+        # self.sl10.setMaximum(5)
+        # self.sl10.setValue(1)
+        # self.sl10.setTickPosition(QSlider.TicksBelow)
+        # self.sl10.setTickInterval(5)
+        
+        self.sl1.valueChanged.connect(self.valuechange)
+    def valuechange(self):
+        print(self.sl1.value())
 
     def init_UI(self):     
         
