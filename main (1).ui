@@ -134,41 +134,6 @@
      </item>
     </layout>
    </widget>
-   <widget class="QComboBox" name="comboBox">
-    <property name="geometry">
-     <rect>
-      <x>880</x>
-      <y>220</y>
-      <width>121</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <item>
-     <property name="text">
-      <string>color palette 1</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>color palette 2</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>color palette 3</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>color palette 4 </string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>color palette 5</string>
-     </property>
-    </item>
-   </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
@@ -221,7 +186,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -310,7 +275,7 @@
      <x>0</x>
      <y>0</y>
      <width>1505</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

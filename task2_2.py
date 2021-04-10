@@ -6,7 +6,7 @@ import pandas as pd
 import pyqtgraph as pg 
 from os.path import dirname, realpath,join
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import  QApplication, QMainWindow,QVBoxLayout,QAction,QFileDialog, QPushButton, QLabel, QCheckBox
+from PyQt5.QtWidgets import QComboBox, QApplication, QMainWindow,QVBoxLayout,QAction,QFileDialog, QPushButton, QLabel, QCheckBox
 from PyQt5.QtCore import pyqtSlot
 from matplotlib.backends.backend_pdf import PdfPages
 from PyQt5.QtGui import QIcon, QPixmap
@@ -35,6 +35,8 @@ from scipy import signal
 import wave
 from scipy.signal import firwin , freqz
 from scipy.fft import rfft, rfftfreq ,fft, fftfreq 
+from matplotlib import cm
+from matplotlib.colors import ListedColormap, LinearSegmentedColormap
 
 
         
@@ -542,6 +544,8 @@ class sigviewer(QMainWindow,From_Main1):
         help_menu.addAction('Quit',self.close)       
 
     ###CHANNEL 1 FUNCTIONS###
+    def MODIFY():
+        self.spectrogram()
 
     def OpenBrowse(self):
         self.fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","CSV Files (*.csv)")
@@ -988,6 +992,7 @@ class mainwind(QMainWindow,From_Main):
         self.x2=[]
         self.y=[]
         self.y2=[]
+        self.cmap= None
 
         self.l=QVBoxLayout(self.graphicsView)
         self.l.setGeometry(QtCore.QRect(10, 5, 571, 150))
@@ -1110,6 +1115,16 @@ class mainwind(QMainWindow,From_Main):
         self.spectrogram3.setShortcut("Ctrl+M")
         self.spectrogram3.clicked.connect(lambda: self.spectrogram())
 
+        self.colorPalette= QtWidgets.QComboBox()
+        self.colorPalette.setGeometry(880, 220, 121, 23)
+        self.colorPalette.addItem("palette 1")
+        self.colorPalette.addItem("palette 2")
+        self.colorPalette.addItem("palette 3")
+        self.colorPalette.addItem("palette 4")
+        self.colorPalette.addItem("palette 5")
+        self.layout().addWidget(self.colorPalette)
+        self.colorPalette.currentIndexChanged.connect(self.combbox)        
+ 
         self.channel1box = QCheckBox("",self)
         self.channel1box.move(560,190)
         self.channel1box.resize(16,17)
@@ -1366,12 +1381,25 @@ class mainwind(QMainWindow,From_Main):
  
     def pauseSignal(self):
         self.timer.stop()
-
+    def combbox(self):
+        
+        if  (self.colorPalette.currentText()=="palette 1"):
+            self.cmap=None 
+        elif (self.colorPalette.currentText()=="palette 2"):
+            self.cmap= cm.get_cmap('copper', 8)
+        elif (self.colorPalette.currentText()=="palette 3")     :
+            self.cmap= cm.get_cmap('gnuplot2', 12)
+        elif (self.colorPalette.currentText()=="palette 4"):
+            self.cmap= cm.get_cmap('Greys', 20)
+        elif (self.colorPalette.currentText()=="palette 5"):
+            self.cmap= cm.get_cmap('Set2', 128)
+        self.spectrogram()
     def spectrogram(self):
         #plotting the spectrogram####
         # Define the list of frequencies
         self.frequencies = np.arange(5,105,5)
-
+        
+        
         # Sampling Frequency
         self.data=pd.DataFrame(pd.read_csv(self.fileName, delimiter =None))
         self.Data=self.data.iloc[1:][1: ]
@@ -1399,9 +1427,10 @@ class mainwind(QMainWindow,From_Main):
         # Plot the spectrogram
         fig = plot.figure()
         plot.subplot(111)
-        self.powerSpectrum, self.freqenciesFound, self.time, self.imageAxis = plot.specgram(self.s2, Fs=self.samplingFrequency)
+        self.powerSpectrum, self.freqenciesFound, self.time, self.imageAxis = plot.specgram(self.s2, Fs=self.samplingFrequency,cmap=self.cmap)
         plot.xlabel('Time')
         plot.ylabel('Frequency')
+        plot.colorbar()
         fig.savefig('plot.png')
         self.upload()
         

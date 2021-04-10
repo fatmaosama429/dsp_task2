@@ -30,6 +30,8 @@ import sys
 import matplotlib.pyplot as plot
 import pyautogui
 from PIL import Image
+from matplotlib import cm
+from matplotlib.colors import ListedColormap, LinearSegmentedColormap
 
         
 scriptDir=dirname(realpath(__file__))
@@ -601,14 +603,14 @@ class sigviewer(QMainWindow,From_Main):
         self.data=pd.DataFrame(pd.read_csv(self.fileName, delimiter =None))
         self.Data=self.data.iloc[1:][1: ]
         self.sub2 = self.Data.values.tolist()
-        self.samplingFrequency   = 2*(len(self.sub2))+1
+        self.samplingFrequency   = 2*(len(self.sub2))
  
         # Create two ndarrays
         self.s1 = np.empty([0]) # For samples
         self.s2 = np.empty([0]) # For signal
         
         # Start Value of the sample
-        self.start   = 1
+        self.start   = 0
 
         # Stop Value of the sample
         self.stop    = self.samplingFrequency
@@ -623,8 +625,9 @@ class sigviewer(QMainWindow,From_Main):
 
         # Plot the spectrogram
         fig = plot.figure()
+        cmap = ListedColormap(["darkorange", "gold", "lawngreen", "lightseagreen"])     
         plot.subplot(111)
-        self.powerSpectrum, self.freqenciesFound, self.time, self.imageAxis = plot.specgram(self.s2, Fs=self.samplingFrequency)
+        self.powerSpectrum, self.freqenciesFound, self.time, self.imageAxis = plot.specgram(self.s2, Fs=self.samplingFrequency,cmap=cmap)
         plot.xlabel('Time')
         plot.ylabel('Frequency')
         fig.savefig('plot.png')
