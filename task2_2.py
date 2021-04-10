@@ -30,6 +30,12 @@ import sys
 import matplotlib.pyplot as plot
 import pyautogui
 from PIL import Image
+from scipy.io.wavfile import read, write
+from scipy import signal
+import wave
+from scipy.signal import firwin , freqz
+from scipy.fft import rfft, rfftfreq ,fft, fftfreq 
+
 
         
 scriptDir=dirname(realpath(__file__))
@@ -1265,29 +1271,63 @@ class mainwind(QMainWindow,From_Main):
     ###CHANNEL 1 FUNCTIONS###
 
     def OpenBrowse(self):
-        self.fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","CSV Files (*.csv)")
+        self.fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*)")
         if self.fileName: 
-            df=pd.read_csv(self.fileName,header=None)
-            self.x=np.array(df[0])
-            self.y=np.array(df[1]) 
-            xrange, yrange = self.sc.viewRange()
-            self.min=self.x[0]
-            self.max=self.x[-1]
-            print(xrange,self.x[-1])
+            if self.fileName.endswith('.csv'):
+                df=pd.read_csv(self.fileName,header=None)
+                self.x=np.array(df[0])
+                self.y=np.array(df[1]) 
+                xrange, yrange = self.sc.viewRange()
+                self.min=self.x[0]
+                self.max=self.x[-1]
+                print(xrange,self.x[-1])
 
-            self.sc.setXRange(xrange[0]/5, xrange[1]/5, padding=0)
-            pen = pg.mkPen(color=(50, 50, 250))
-            self.sc.plot(self.x, self.y, pen=pen)
+                self.sc.setXRange(xrange[0]/5, xrange[1]/5, padding=0)
+                pen = pg.mkPen(color=(50, 50, 250))
+                self.sc.plot(self.x, self.y, pen=pen)
+            if self.fileName.endswith('.wav'):
+                audiofile= read(self.fileName)
+                samplingrate = audiofile[0]
+                audio=audiofile[1]
+                audio2= audio.astype(float)
+                l=len(audio)
+                self.sc.plot(audio2[0:l])
+                xrange, yrange = self.sc.viewRange()
+                self.max=l
+                print(xrange,audio2, l)
+                self.sc.setXRange(xrange[0]/50, xrange[1]/50, padding=0)
+                t=1/samplingrate
+                # yf=fft(audio2) 
+                # xf=fftfreq(l,t)
+                yf=rfft(audio2)
+                xf=rfftfreq(l,t)
+                # plot.subplot(2,2,1)
+                # plot.plot(xf1,np.abs(yf1))
+                # plot.show()
+                # plot.subplot(2,2,2)
+                plot.plot(xf,np.abs(yf))
+                plot.show()
+                # self.playaudio(self.fileName)
+
 
     def scrollR(self):
-        xrange, yrange = self.sc.viewRange()
-        scrollvalue = (xrange[1] - xrange[0])/10
-        if xrange[1] < self.max:
-            self.sc.setXRange(xrange[0]+scrollvalue, xrange[1]+scrollvalue, padding=0)
-            # self.sc.setYrange(yrange[0],yrange[1], padding=0)
-        else:
-            pass
-
+        if self.fileName.endswith('.csv'):
+            xrange, yrange = self.sc.viewRange()
+            scrollvalue = (xrange[1] - xrange[0])/10
+            if xrange[1] < self.max:
+                self.sc.setXRange(xrange[0]+scrollvalue, xrange[1]+scrollvalue, padding=0)
+                # self.sc.setYrange(yrange[0],yrange[1], padding=0)
+            else:
+                pass
+        if self.fileName.endswith('.wav'):
+            xrange, yrange = self.sc.viewRange()
+            scrollvalue = (xrange[1] - xrange[0])/10
+            if xrange[1] < self.max:
+                self.sc.setXRange(xrange[0]+scrollvalue, xrange[1]+scrollvalue, padding=0)
+                # self.sc.setYrange(yrange[0],yrange[1], padding=0)
+            else:
+                pass
+            
     def scrollL(self):
         xrange, yrange = self.sc.viewRange()
         scrollvalue = (xrange[1] - xrange[0])/10
