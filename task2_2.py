@@ -1391,7 +1391,7 @@ class mainwind(QMainWindow,From_Main):
             self.cmap= cm.get_cmap('gnuplot2', 12)
         elif (self.colorPalette.currentText()=="palette 4"):
             self.cmap= cm.get_cmap('Greys', 20)
-        elif (self.colorPalette.currentText()=="palette 5"):
+        elif (self.colorPalette.currentText()=="palette 5"): 
             self.cmap= cm.get_cmap('Set2', 128)
         self.spectrogram()
     def spectrogram(self):
