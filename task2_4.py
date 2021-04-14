@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import pyqtgraph as pg 
 from os.path import dirname, realpath,join
+import simpleaudio as sa
 # from PyQt5.QtGui import QIcon
 # from PyQt5.QtWidgets import  QApplication, QMainWindow,QVBoxLayout,QAction,QFileDialog, QPushButton, QLabel, QCheckBox
 # from PyQt5.QtCore import pyqtSlot
@@ -35,6 +36,7 @@ from scipy import signal
 import wave
 from scipy.signal import firwin , freqz
 from scipy.fft import rfft, rfftfreq ,fft, fftfreq ,ifft
+import soundfile as sf
 
 
         
@@ -1366,7 +1368,12 @@ class mainwind(QMainWindow,From_Main):
                 self.yfft=rfft(self.audio2)
                 self.yfft_abs=np.abs(self.yfft)
                 self.xfft=rfftfreq(l,t)
-            
+                # play_obj = sa.play_buffer(self.audio2, 1, 1, self.samplingrate)
+
+                wave_obj = sa.WaveObject.from_wave_file(self.fileName)
+                play_obj = wave_obj.play()
+                # play_obj.wait_done()
+                    
                 # self.playaudio(self.fileName)
             self.spectrogram()
 
@@ -1596,16 +1603,20 @@ class mainwind(QMainWindow,From_Main):
         pen = pg.mkPen(color=(255, 255, 255))
         self.sc2.clear()
         self.sc.clear()
-        self.sc2.plot(abs(self.signal[0:]), pen=pen)
+        self.sc2.plot(self.signal[0:].real, pen=pen, self.signal[0:].imag)
         self.sc.plot(self.audio2[0:], pen=pen)
         print ("audio",self.audio2)
         print("signal",self.signal)
         fig = plot.figure()
-        self.powerSpectrum, self.freqenciesFound, self.time, self.imageAxis = plot.specgram(abs(self.signal), Fs=self.samplingrate)
+        self.powerSpectrum, self.freqenciesFound, self.time, self.imageAxis = plot.specgram(self.signal.real, Fs=self.samplingrate)
         plot.xlabel('Time')
         plot.ylabel('Frequency')
         fig.savefig('plot.png')
         self.upload()
+        sf.write('sound.wav',self.signal.real, self.samplingrate)
+        wave_obj = sa.WaveObject.from_wave_file("sound.wav")
+        play_obj = wave_obj.play()
+        # play_obj = sa.play_buffer(self.signal, 1, 1, self.samplingrate)
           
     def viewsigviewer(self):
         new=sigviewer()

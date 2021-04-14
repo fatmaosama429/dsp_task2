@@ -52,7 +52,8 @@
      </rect>
     </property>
    </widget>
-   <widget class="QWidget" name="l ayoutWidget">
+<<<<<<< HEAD
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>10</x>

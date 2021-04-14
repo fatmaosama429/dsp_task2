@@ -34,12 +34,12 @@ from scipy.io.wavfile import read, write
 from scipy import signal
 import wave
 from scipy.signal import firwin , freqz
-from scipy.fft import rfft, rfftfreq ,fft, fftfreq 
+from scipy.fft import rfft, rfftfreq ,fft, fftfreq ,ifft
 
 
         
 scriptDir=dirname(realpath(__file__))
-From_Main,_ = loadUiType(join(dirname(__file__),"main (1).ui"))
+From_Main,_ = loadUiType(join(dirname(__file__),"main.ui"))
 From_Main1,_= loadUiType(join(dirname(__file__),"task1.ui"))
 
 class sigviewer(QMainWindow,From_Main1):
@@ -1013,91 +1013,33 @@ class mainwind(QMainWindow,From_Main):
         self.label2.setText("")
         self.label2.setStyleSheet("background-color: white")  
 
-        self.sl1 = QSlider(Qt.Vertical,self)
-        self.sl1.setGeometry(34, -15, 15, 189)
-        self.sl1.setMinimum(0)
-        self.sl1.setMaximum(5)
-        self.sl1.setValue(1)
-        self.sl1.setTickPosition(QSlider.TicksBelow)
-        self.sl1.setTickInterval(5)
+                 
+        self.sl1=self.verticalSlider
+        self.sl2=self.verticalSlider_2
+        self.sl3=self.verticalSlider_3
+        self.sl4=self.verticalSlider_4
+        self.sl5=self.verticalSlider_5
+        self.sl6=self.verticalSlider_6
+        self.sl7=self.verticalSlider_7
+        self.sl8=self.verticalSlider_8
+        self.sl9=self.verticalSlider_9
+        self.sl10=self.verticalSlider_10
+       
+        self.min_freq=self.verticalSlider_11
+        self.max_freq=self.verticalSlider_12
 
 
-
-        # self.sl2 = QSlider(Qt.Vertical)
-        # self.sl2.setGeometry(88, 1, 15, 189)
-        # self.sl2.setMinimum(0)
-        # self.sl2.setMaximum(5)
-        # self.sl2.setValue(1)
-        # self.sl2.setTickPosition(QSlider.TicksBelow)
-        # self.sl2.setTickInterval(5)
-
-        # self.sl3 = QSlider(Qt.Vertical)
-        # self.sl3.setGeometry(142, 1, 15, 189)
-        # self.sl3.setMinimum(0)
-        # self.sl3.setMaximum(5)
-        # self.sl3.setValue(1)
-        # self.sl3.setTickPosition(QSlider.TicksBelow)
-        # self.sl3.setTickInterval(5)
-
-        # self.sl4 = QSlider(Qt.Vertical)
-        # self.sl4.setGeometry(196, 1, 15, 189)
-        # self.sl4.setMinimum(0)
-        # self.sl4.setMaximum(5)
-        # self.sl4.setValue(1)
-        # self.sl4.setTickPosition(QSlider.TicksBelow)
-        # self.sl4.setTickInterval(5)
-
-        # self.sl5 = QSlider(Qt.Vertical)
-        # self.sl5.setGeometry(250, 1, 15, 189)
-        # self.sl5.setMinimum(0)
-        # self.sl5.setMaximum(5)
-        # self.sl5.setValue(1)
-        # self.sl5.setTickPosition(QSlider.TicksBelow)
-        # self.sl5.setTickInterval(5)
-
-        # self.sl6 = QSlider(Qt.Vertical)
-        # self.sl6.setGeometry(304, 1, 15, 189)
-        # self.sl6.setMinimum(0)
-        # self.sl6.setMaximum(5)
-        # self.sl6.setValue(1)
-        # self.sl6.setTickPosition(QSlider.TicksBelow)
-        # self.sl6.setTickInterval(5)
-
-        # self.sl7 = QSlider(Qt.Vertical)
-        # self.sl7.setGeometry(358, 1, 15, 189)
-        # self.sl7.setMinimum(0)
-        # self.sl7.setMaximum(5)
-        # self.sl7.setValue(1)
-        # self.sl7.setTickPosition(QSlider.TicksBelow)
-        # self.sl7.setTickInterval(5)
-
-        # self.sl8 = QSlider(Qt.Vertical)
-        # self.sl8.setGeometry(412, 1, 15, 189)
-        # self.sl8.setMinimum(0)
-        # self.sl8.setMaximum(5)
-        # self.sl8.setValue(1)
-        # self.sl8.setTickPosition(QSlider.TicksBelow)
-        # self.sl8.setTickInterval(5)
-
-        # self.sl9 = QSlider(Qt.Vertical)
-        # self.sl9.setGeometry(466, 1, 15, 189)
-        # self.sl9.setMinimum(0)
-        # self.sl9.setMaximum(5)
-        # self.sl9.setValue(1)
-        # self.sl9.setTickPosition(QSlider.TicksBelow)
-        # self.sl9.setTickInterval(5)
-
-        # self.sl10 = QSlider(Qt.Vertical)
-        # self.sl10.setGeometry(5201, 1, 15, 189)
-        # self.sl10.setMinimum(0)
-        # self.sl10.setMaximum(5)
-        # self.sl10.setValue(1)
-        # self.sl10.setTickPosition(QSlider.TicksBelow)
-        # self.sl10.setTickInterval(5)
         
         self.sl1.valueChanged.connect(self.valuechange)
-    def valuechange(self):
-        print(self.sl1.value())
+        self.sl2.valueChanged.connect(self.valuechange)
+        self.sl3.valueChanged.connect(self.valuechange)
+        self.sl4.valueChanged.connect(self.valuechange)
+        self.sl5.valueChanged.connect(self.valuechange)
+        self.sl6.valueChanged.connect(self.valuechange)
+        self.sl7.valueChanged.connect(self.valuechange)
+        self.sl8.valueChanged.connect(self.valuechange)
+        self.sl9.valueChanged.connect(self.valuechange)
+        self.sl10.valueChanged.connect(self.valuechange)
 
     def init_UI(self):     
         
@@ -1240,7 +1182,12 @@ class mainwind(QMainWindow,From_Main):
         newAction=QAction(QIcon("info.png"), "open signals viewer", self)
         file_menu.addAction(newAction)
         newAction.triggered.connect(self.viewsigviewer)
-        newAction.setShortcut("alt+n")
+        newAction.setShortcut("alt+shift+n")
+
+        newwAction=QAction(QIcon("info.png"), "open signals viewer", self)
+        file_menu.addAction(newwAction)
+        newwAction.triggered.connect(self.newwindow)
+        newwAction.setShortcut("alt+n")
         
 
         closeAction=QAction(QIcon("close.png"), "Close", self)
@@ -1359,7 +1306,6 @@ class mainwind(QMainWindow,From_Main):
         help_menu.addAction('Quit',self.close)       
 
     ###CHANNEL 1 FUNCTIONS###
-
     def OpenBrowse(self):
         self.fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*)")
         if self.fileName: 
@@ -1370,77 +1316,80 @@ class mainwind(QMainWindow,From_Main):
                 xrange, yrange = self.sc.viewRange()
                 self.min=self.x[0]
                 self.max=self.x[-1]
-                print(xrange,self.x[-1])
-
+                # print(xrange,self.x[-1])
                 self.sc.setXRange(xrange[0]/5, xrange[1]/5, padding=0)
                 pen = pg.mkPen(color=(50, 50, 250))
                 self.sc.plot(self.x, self.y, pen=pen)
             if self.fileName.endswith('.wav'):
                 audiofile= read(self.fileName)
-                samplingrate = audiofile[0]
+                self.samplingrate = audiofile[0]
                 audio=audiofile[1]
-                audio2= audio.astype(float)
+                self.audio2= audio.astype(float)
                 l=len(audio)
-                self.sc.plot(audio2[0:l])
+                self.sc.plot(self.audio2[0:l])
+                self.sc2.plot(self.audio2[0:l])
                 xrange, yrange = self.sc.viewRange()
                 self.max=l
-                print(xrange,audio2, l)
+                self.min=0
+                # print(xrange,self.audio2, l)
                 self.sc.setXRange(xrange[0]/50, xrange[1]/50, padding=0)
-                t=1/samplingrate
-                # yf=fft(audio2) 
-                # xf=fftfreq(l,t)
-                yf=rfft(audio2)
-                xf=rfftfreq(l,t)
-                # plot.subplot(2,2,1)
-                # plot.plot(xf1,np.abs(yf1))
-                # plot.show()
-                # plot.subplot(2,2,2)
-                plot.plot(xf,np.abs(yf))
-                plot.show()
+                self.sc2.setXRange(xrange[0]/50, xrange[1]/50, padding=0)
+                t=1/self.samplingrate
+                self.yfft=rfft(self.audio2)
+                self.yfft_abs=np.abs(self.yfft)
+                self.xfft=rfftfreq(l,t)
+            
                 # self.playaudio(self.fileName)
-
+            self.spectrogram()
 
     def scrollR(self):
-        if self.fileName.endswith('.csv'):
-            xrange, yrange = self.sc.viewRange()
-            scrollvalue = (xrange[1] - xrange[0])/10
-            if xrange[1] < self.max:
-                self.sc.setXRange(xrange[0]+scrollvalue, xrange[1]+scrollvalue, padding=0)
-                # self.sc.setYrange(yrange[0],yrange[1], padding=0)
-            else:
-                pass
-        if self.fileName.endswith('.wav'):
-            xrange, yrange = self.sc.viewRange()
-            scrollvalue = (xrange[1] - xrange[0])/10
-            if xrange[1] < self.max:
-                self.sc.setXRange(xrange[0]+scrollvalue, xrange[1]+scrollvalue, padding=0)
-                # self.sc.setYrange(yrange[0],yrange[1], padding=0)
-            else:
-                pass
+        # if self.fileName.endswith('.csv'):
+        #     xrange, yrange = self.sc.viewRange()
+        #     scrollvalue = (xrange[1] - xrange[0])/10
+        #     if xrange[1] < self.max:
+        #         self.sc.setXRange(xrange[0]+scrollvalue, xrange[1]+scrollvalue, padding=0)
+        #         self.sc2.setXRange(xrange[0]+scrollvalue, xrange[1]+scrollvalue, padding=0)
+        #         # self.sc.setYrange(yrange[0],yrange[1], padding=0)
+        #     else:
+        #         pass
+        # if self.fileName.endswith('.wav'):
+        xrange, yrange = self.sc.viewRange()
+        scrollvalue = (xrange[1] - xrange[0])/10
+        if xrange[1] < self.max:
+            self.sc.setXRange(xrange[0]+scrollvalue, xrange[1]+scrollvalue, padding=0)
+            self.sc2.setXRange(xrange[0]+scrollvalue, xrange[1]+scrollvalue, padding=0)
+            # self.sc.setYrange(yrange[0],yrange[1], padding=0)
+        else:
+            pass
             
     def scrollL(self):
         xrange, yrange = self.sc.viewRange()
         scrollvalue = (xrange[1] - xrange[0])/10
         if xrange[0]>self.min:
             self.sc.setXRange(xrange[0]-scrollvalue, xrange[1]-scrollvalue, padding=0)
+            self.sc2.setXRange(xrange[0]-scrollvalue, xrange[1]-scrollvalue, padding=0)
         else:
             pass
-
+    
     def zoomin(self):
         xrange, yrange = self.sc.viewRange()
         # self.sc.setYRange(yrange[0]/2, yrange[1]/2, padding=0)
         self.sc.setXRange(xrange[0]/2, xrange[1]/2, padding=0)
+        self.sc2.setXRange(xrange[0]/2, xrange[1]/2, padding=0)
 
     def zoomout(self):
         xrange, yrange = self.sc.viewRange()
-        if xrange[0]>=self.min and xrange[1]<((0.5*self.max)+1):
+        if xrange[1]<((0.5*self.max)+1):
             self.sc.setXRange(xrange[0]*2, xrange[1]*2, padding=0)
+            self.sc2.setXRange(xrange[0]*2, xrange[1]*2, padding=0)
         else:
             pass
 
     def clear(self):
         self.sc.clear()
         self.sc.setXRange(0, 1, padding=0)
+        self.sc2.clear()
+        self.sc2.setXRange(0, 1, padding=0)
     
     def dynamicSig(self):
         self.timer = QtCore.QTimer()
@@ -1451,6 +1400,7 @@ class mainwind(QMainWindow,From_Main):
         scrollvalue = (xrange[1] - xrange[0])/500
         if xrange[1]< self.max:
             self.sc.setXRange(xrange[0]+scrollvalue, xrange[1]+scrollvalue, padding=0)
+            self.sc2.setXRange(xrange[0]+scrollvalue, xrange[1]+scrollvalue, padding=0)
         else:
             pass
  
@@ -1459,42 +1409,51 @@ class mainwind(QMainWindow,From_Main):
 
     def spectrogram(self):
         #plotting the spectrogram####
-        # Define the list of frequencies
-        self.frequencies = np.arange(5,105,5)
+        if self.fileName.endswith(".csv"):
+            # Define the list of frequencies
+            self.frequencies = np.arange(5,105,5)
 
-        # Sampling Frequency
-        self.data=pd.DataFrame(pd.read_csv(self.fileName, delimiter =None))
-        self.Data=self.data.iloc[1:][1: ]
-        self.sub2 = self.Data.values.tolist()
-        self.samplingFrequency   = 2*(len(self.sub2))+1
- 
-        # Create two ndarrays
-        self.s1 = np.empty([0]) # For samples
-        self.s2 = np.empty([0]) # For signal
-        
-        # Start Value of the sample
-        self.start   = 1
+            # Sampling Frequency
+            self.data=pd.DataFrame(pd.read_csv(self.fileName, delimiter =None))
+            self.Data=self.data.iloc[1:][1: ]
+            self.sub2 = self.Data.values.tolist()
+            self.samplingFrequency   = 2*(len(self.sub2))+1
+    
+            # Create two ndarrays
+            self.s1 = np.empty([0]) # For samples
+            self.s2 = np.empty([0]) # For signal
+            
+            # Start Value of the sample
+            self.start   = 1
 
-        # Stop Value of the sample
-        self.stop    = self.samplingFrequency
-        for self.frequency in self.frequencies:
+            # Stop Value of the sample
+            self.stop    = self.samplingFrequency
+            for self.frequency in self.frequencies:
 
-            self.sub1 = np.arange(self.start, self.stop, 1)
+                self.sub1 = np.arange(self.start, self.stop, 1)
 
-        self.s1      = np.append(self.s1, self.sub1)
-        self.s2      = np.append(self.s2, self.sub2)
-        self.start   = self.stop+1
-        self.stop    = self.start+self.samplingFrequency
+            self.s1      = np.append(self.s1, self.sub1)
+            self.s2      = np.append(self.s2, self.sub2)
+            self.start   = self.stop+1
+            self.stop    = self.start+self.samplingFrequency
 
-        # Plot the spectrogram
-        fig = plot.figure()
-        plot.subplot(111)
-        self.powerSpectrum, self.freqenciesFound, self.time, self.imageAxis = plot.specgram(self.s2, Fs=self.samplingFrequency)
-        plot.xlabel('Time')
-        plot.ylabel('Frequency')
-        fig.savefig('plot.png')
-        self.upload()
-        
+            # Plot the spectrogram
+            fig = plot.figure()
+            plot.subplot(111)
+            self.powerSpectrum, self.freqenciesFound, self.time, self.imageAxis = plot.specgram(self.s2, Fs=self.samplingFrequency)
+            plot.xlabel('Time')
+            plot.ylabel('Frequency')
+            fig.savefig('plot.png')
+            self.upload()
+        if self.fileName.endswith(".wav"):
+            fig = plot.figure()
+            plot.subplot(111)
+            self.powerSpectrum, self.freqenciesFound, self.time, self.imageAxis = plot.specgram(self.audio2, Fs=self.samplingrate)
+            plot.xlabel('Time')
+            plot.ylabel('Frequency')
+            fig.savefig('plot.png')
+            self.upload()
+            
     def upload(self):
         self.label.setPixmap(QtGui.QPixmap("plot.png"))
         self.label.setScaledContents(True)
@@ -1529,7 +1488,7 @@ class mainwind(QMainWindow,From_Main):
     def show3(self):
         if(self.channel3box.isChecked()==True):
             self.graphicsView_3.show()
-            self.label2.show()
+            # self.label2.show()
             # self.open2.show()
             # self.play2.show()
             # self.pause2.show()
@@ -1542,7 +1501,7 @@ class mainwind(QMainWindow,From_Main):
 
         else:   
             self.graphicsView_3.hide()
-            self.label2.hide()
+            # self.label2.hide()
             # self.open2.hide()
             # self.play2.hide()
             # self.pause2.hide()
@@ -1552,7 +1511,6 @@ class mainwind(QMainWindow,From_Main):
             # self.scroll_right2.hide()
             # self.scroll_left2.hide()
             # self.spectrogram_2.hide()
-
     ##save to pdf function##
     def savepdf(self):
         fig=plot.figure()
@@ -1561,39 +1519,77 @@ class mainwind(QMainWindow,From_Main):
             if len(self.x)==0:
                pass    
             else:
-                plot.subplot(3,2,1)
+                plot.subplot(2,2,1)
                 plot.plot(self.x, self.y,color='red',linewidth=2,scalex=True)
-                plot.subplot(3,2,2)
+                plot.subplot(2,2,2)
                 self.powerSpectrum, self.freqenciesFound, self.time, self.imageAxis = plot.specgram(self.s2, Fs=self.samplingFrequency)
                 plot.xlabel('Time')
                 plot.ylabel('Frequency')
-        # if(self.channel2box.isChecked()==True):
-        #     if len(self.x1) ==0 :
-        #         pass
-        #     else:
-        #         plot.subplot(3,2,3)
-        #         plot.plot(self.x1,self.y1,color='red',linewidth=2,scalex=True)
-        #         plot.subplot(3,2,4)
-        #         self.powerSpectrum1, self.freqenciesFound1, self.time1, self.imageAxis1 = plot.specgram(self.s2, Fs=self.samplingFrequency)
-        #         plot.xlabel('Time')
-                plot.ylabel('Frequency')
+     
         if(self.channel3box.isChecked()==True):
             if len(self.x2) ==0 :
                 pass
             else:
-                plot.subplot(3,2,5)
+                plot.subplot(2,2,3)
                 plot.plot(self.x2, self.y2,color='red',linewidth=2,scalex=True)
-                plot.subplot(3,2,6)
+                plot.subplot(2,2,4)
                 self.powerSpectrum2, self.freqenciesFound2, self.time2, self.imageAxis2 = plot.specgram(self.s2, Fs=self.samplingFrequency)
                 plot.xlabel('Time')
                 plot.ylabel('Frequency')
         # plot.show()
         fig.savefig("x.pdf")   
 
+    def valuechange(self):
+        bandwidth=int(self.samplingrate/20)
+        band1=self.yfft[0:bandwidth]*self.sl1.value()
+        band2=self.yfft[bandwidth:2*bandwidth]*self.sl2.value()
+        band3=self.yfft[2*bandwidth:3*bandwidth]*self.sl3.value()
+        band4=self.yfft[3*bandwidth:4*bandwidth]*self.sl4.value()
+        band5=self.yfft[4*bandwidth:5*bandwidth]*self.sl5.value()
+        band6=self.yfft[5*bandwidth:6*bandwidth]*self.sl6.value()
+        band7=self.yfft[6*bandwidth:7*bandwidth]*self.sl7.value()
+        band8=self.yfft[7*bandwidth:8*bandwidth]*self.sl8.value()
+        band9=self.yfft[8*bandwidth:9*bandwidth]*self.sl9.value()
+        band10=self.yfft[9*bandwidth:10*bandwidth]*self.sl10.value()
+        self.new_yfft=np.concatenate([band1,band2,band3,band4,band5,band6,band7,band8,band9,band10])
+        self.newsignal()
+        # print(band1,self.yfft_abs[0:bandwidth])
+        # plot.subplot(2,2,1)
+        # plot.plot(self.xfft,abs(self.yfft))
+        # plot.title("oldfft")
+        # plot.subplot(2,2,2)
+        # plot.plot(self.xfft[1:],abs(self.new_yfft))
+        # plot.title("newfft")
+        # plot.show()
+  
+    def newsignal(self):
+        self.signal=ifft(self.new_yfft)
+        t=np.arange(len(self.signal))
+        pen = pg.mkPen(color=(255, 255, 255))
+        self.sc2.clear()
+        self.sc.clear()
+        self.sc2.plot(abs(self.signal[0:]), pen=pen)
+        self.sc.plot(self.audio2[0:], pen=pen)
+        print ("audio",self.audio2)
+        print("signal",self.signal)
+        fig = plot.figure()
+        self.powerSpectrum, self.freqenciesFound, self.time, self.imageAxis = plot.specgram(abs(self.signal), Fs=self.samplingrate)
+        plot.xlabel('Time')
+        plot.ylabel('Frequency')
+        fig.savefig('plot.png')
+        self.upload()
+          
     def viewsigviewer(self):
         new=sigviewer()
         new.show()
         new.setWindowTitle("viewsignals")
+   
+    def newwindow(self):
+        new= mainwind()
+        new.show()
+        new.setWindowTitle("Sigviewer")
+        new.setWindowIcon(QIcon("icon.png"))
+        # pass
 
 app = QApplication(sys.argv)
 sheet= mainwind()
