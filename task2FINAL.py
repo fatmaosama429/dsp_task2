@@ -36,7 +36,7 @@ import soundfile as sf
 
         
 scriptDir=dirname(realpath(__file__))
-From_Main,_ = loadUiType(join(dirname(__file__),"main.1.ui"))
+From_Main,_ = loadUiType(join(dirname(__file__),"main.ui"))
 From_Main1,_= loadUiType(join(dirname(__file__),"task1.ui"))
 From_Main2,_ = loadUiType(join(dirname(__file__),"main2.ui"))
 
