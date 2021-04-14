@@ -69,6 +69,7 @@ class WINDOW(QMainWindow,From_Main2):
         new=sigviewer()
         new.show()
         new.setWindowTitle("Equalizer")
+        new.setWindowIcon(QIcon("icon.png"))
    
     def newwindow(self):
         new= mainwind()
@@ -402,8 +403,8 @@ class mainwind(QMainWindow,From_Main):
     def OpenBrowse(self):
         self.fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*)")
         if self.fileName: 
-            # self.sc.clear()
-            # self.sc2.clear()
+            self.sc.clear()
+            self.sc2.clear()
             if self.fileName.endswith('.csv'):
                 df=pd.read_csv(self.fileName,header=None)
                 self.x=np.array(df[0])
@@ -424,16 +425,19 @@ class mainwind(QMainWindow,From_Main):
                 arr= np.arange(1, (self.samplingrate/2)+1 , 1)
                 self.array= arr[::-1]
                 logal = 20* (np.log10(self.array/(self.samplingrate/2))*(-1))
+                
                 self.min_freq.setMinimum(int(logal[0]))
                 self.min_freq.setMaximum(int(logal[-1]))
                 self.max_freq.setMinimum(int(logal[0]))
                 self.max_freq.setMaximum(int(logal[-1]))
+
                 self.max_freq.setValue(int(logal[-1]))
                 self.min_freq.setValue(int(logal[0]))
-                # self.min_freq.setTickInterval(5)
-                # self.max_freq.setTickInterval(5)
+
                 self.min_freq.setSingleStep(int(logal[-1]/10))
                 self.max_freq.setSingleStep(int(logal[-1]/10))
+
+
                 self.sc.plot(self.audio2[0:l])
                 self.sc2.plot(self.audio2[0:l])
                 xrange, yrange = self.sc.viewRange()
@@ -445,8 +449,8 @@ class mainwind(QMainWindow,From_Main):
                 self.yfft=rfft(self.audio2)
                 self.yfft_abs=np.abs(self.yfft)
                 self.xfft=rfftfreq(l,t)
-                wave_obj = sa.WaveObject.from_wave_file(self.fileName)
-                play_obj = wave_obj.play()            
+                # wave_obj = sa.WaveObject.from_wave_file(self.fileName)
+                # play_obj = wave_obj.play()            
                 # self.playaudio(self.fileName)
             self.spectrogram()
 
@@ -498,11 +502,11 @@ class mainwind(QMainWindow,From_Main):
             pass
     
     def inc_speed(self):
-        self.speed-=50
+        self.speed-=5
         # print (self.speed)
 
     def dec_speed(self):
-        self.speed+= 50
+        self.speed+= 5
         # print(self.speed)
 
     def pauseSignal(self):
@@ -521,7 +525,7 @@ class mainwind(QMainWindow,From_Main):
         elif (self.colorPalette.currentText()=="palette 5"):
             self.cmap= cm.get_cmap('Set2', 128)
         self.spectrogram()
-        self.valuechange()
+        # self.valuechange()
 
     def spectrogram(self):
         #plotting the spectrogram for csv####
@@ -578,7 +582,7 @@ class mainwind(QMainWindow,From_Main):
         self.label.setScaledContents(True)
 
     def savepdf(self):
-        self.newsignal
+        # self.newsignal()
         fig=plot.figure()
         # plot.subplot(2,1,1)
         # plot.plot(self.audio2[0:],color='black',linewidth=0.005,scalex=True)
@@ -654,9 +658,9 @@ class mainwind(QMainWindow,From_Main):
         plot.ylabel('Frequency')
         fig.savefig('plot.png')
         self.upload()
-        sf.write('sound.wav',self.signal.real, self.samplingrate)
-        wave_obj = sa.WaveObject.from_wave_file("sound.wav")
-        play_obj = wave_obj.play()
+        # sf.write('sound.wav',self.signal.real, self.samplingrate)
+        # wave_obj = sa.WaveObject.from_wave_file("sound.wav")
+        # play_obj = wave_obj.play()
 
     def changefreq(self):
         if self.max_freq.value()> self.min_freq.value():
