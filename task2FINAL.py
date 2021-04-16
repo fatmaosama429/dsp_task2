@@ -123,8 +123,8 @@ class mainwind(QMainWindow,From_Main):
        
         self.min_freq=self.verticalSlider_11
         self.max_freq=self.verticalSlider_12
-        self.min_freq.valueChanged.connect(self.spectrogram)
-        self.max_freq.valueChanged.connect(self.spectrogram)
+        self.min_freq.valueChanged.connect(self.changefreq)
+        self.max_freq.valueChanged.connect(self.changefreq)
 
         self.sl1.valueChanged.connect(self.valuechange)
         self.sl2.valueChanged.connect(self.valuechange)
@@ -403,8 +403,7 @@ class mainwind(QMainWindow,From_Main):
     def OpenBrowse(self):
         self.fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*)")
         if self.fileName: 
-            self.sc.clear()
-            self.sc2.clear()
+            
             if self.fileName.endswith('.csv'):
                 df=pd.read_csv(self.fileName,header=None)
                 self.x=np.array(df[0])
@@ -422,22 +421,23 @@ class mainwind(QMainWindow,From_Main):
                 audio=audiofile[1]
                 self.audio2= audio.astype(float)
                 l=len(audio)
-                arr= np.arange(1, (self.samplingrate/2)+1 , 1)
-                self.array= arr[::-1]
-                logal = 20* (np.log10(self.array/(self.samplingrate/2))*(-1))
+                # arr= np.arange(1, (self.samplingrate/2)+1 , 1)
+                # self.array= arr[::-1]
+                # logal = 20* (np.log10(self.array/(self.samplingrate/2))*(-1))
 
                 self.min_freq.setMinimum(0)
-                self.min_freq.setMaximum(int(logal[-1]))
+                self.min_freq.setMaximum(self.samplingrate)
                 self.max_freq.setMinimum(0)
-                self.max_freq.setMaximum(int(logal[-1]))
+                self.max_freq.setMaximum(self.samplingrate/2)
 
-                self.max_freq.setValue(int(logal[-1]))
+                self.max_freq.setValue(self.samplingrate/2)
                 self.min_freq.setValue(0)
 
                 self.min_freq.setSingleStep(1)
                 self.max_freq.setSingleStep(1)
 
-
+                # self.sc.clear()
+                # self.sc2.clear()
                 self.sc.plot(self.audio2[0:l])
                 self.sc2.plot(self.audio2[0:l])
                 xrange, yrange = self.sc.viewRange()
@@ -449,9 +449,9 @@ class mainwind(QMainWindow,From_Main):
                 self.yfft=fft(self.audio2)
                 self.yfft_abs=np.abs(self.yfft)
                 self.xfft=fftfreq(l,t)
-                # wave_obj = sa.WaveObject.from_wave_file(self.fileName)
+                wave_obj = sa.WaveObject.from_wave_file(self.fileName)
                 # play_obj = wave_obj.play()            
-                # self.playaudio(self.fileName)
+                
             self.spectrogram()
 
     def scrollR(self):
@@ -527,20 +527,19 @@ class mainwind(QMainWindow,From_Main):
             self.cmap= cm.get_cmap('Set2', 128)
         self.spectrogram()
         
-
     def spectrogram(self):
         #plotting the spectrogram for .wav####
         if self.fileName.endswith(".wav"):
-            if self.max_freq.value()> self.min_freq.value():
-                fig = plot.figure()
-                plot.subplot(111)
-                # self.powerSpectrum, self.freqenciesFound, self.time, self.imageAxis = plot.specgram(self.audio2, Fs=self.samplingrate, cmap=self.cmap)
-                self.powerSpectrum, self.freqenciesFound, self.time, self.imageAxis = plot.specgram(self.audio2, Fs=self.samplingrate, cmap=self.cmap, vmin= self.min_freq.value(), vmax=self.max_freq.value())
-                plot.colorbar()
-                plot.xlabel('Time')
-                plot.ylabel('Frequency')
-                fig.savefig('plot.png')
-                self.upload()
+            fig = plot.figure()
+            plot.subplot(111)
+            self.powerSpectrum, self.freqenciesFound, self.time, self.imageAxis = plot.specgram(self.audio2, Fs=self.samplingrate, cmap=self.cmap)
+            # plot.colorbar()
+            plot.ylim(self.min_freq.value(),self.max_freq.value())
+            plot.xlabel('Time')
+            plot.ylabel('Frequency')
+            fig.savefig('plot.png')
+            plot.close()
+            self.upload()
 
         #plotting the spectrogram for csv####
         if self.fileName.endswith(".csv"):
@@ -579,6 +578,7 @@ class mainwind(QMainWindow,From_Main):
             plot.ylabel('Frequency')
             plot.colorbar()
             fig.savefig('plot.png')
+            plot.close()
             self.upload()
          #plotting the spectrogram for wav####
                    
@@ -594,7 +594,7 @@ class mainwind(QMainWindow,From_Main):
         # plot.title("before")
         plot.subplot(2,1,2)
         self.powerSpectrum, self.freqenciesFound, self.time, self.imageAxis = plot.specgram(self.signal[0:].real, Fs=self.samplingrate,cmap=self.cmap)
-        plot.colorbar()
+        # plot.colorbar()
         plot.xlabel('Time')
         plot.ylabel('Frequency')
         plot.subplot(2,1,1)
@@ -605,7 +605,7 @@ class mainwind(QMainWindow,From_Main):
         if fn:
             if QtCore.QFileInfo(fn).suffix() == "": fn += ".pdf"
             fig.savefig(fn)
-        
+        plot.close()
         # plot.subplot(2,2,3)
         # plot.plot(self.x2, self.y2,color='red',linewidth=2,scalex=True)
         # plot.subplot(2,2,4)
@@ -617,83 +617,91 @@ class mainwind(QMainWindow,From_Main):
 
     def valuechange(self):
         bandwidth=int(self.samplingrate/10)
-        band1=self.yfft[0:bandwidth]*self.sl1.value()
+        self.new_yfft=self.yfft.copy()
+        self.new_yfft[0:bandwidth]=self.new_yfft[0:bandwidth]*self.sl1.value()
         self.label_13.setText(str(bandwidth))
-        band2=self.yfft[bandwidth:2*bandwidth]*self.sl2.value()
+        self.new_yfft[bandwidth:2*bandwidth]=self.new_yfft[bandwidth:2*bandwidth]*self.sl2.value()
         self.label_14.setText(str(2*bandwidth))
-        band3=self.yfft[2*bandwidth:3*bandwidth]*self.sl3.value()
+        self.new_yfft[2*bandwidth:3*bandwidth]=self.new_yfft[2*bandwidth:3*bandwidth]*self.sl3.value()
         self.label_15.setText(str(3*bandwidth))
-        band4=self.yfft[3*bandwidth:4*bandwidth]*self.sl4.value()
+        self.new_yfft[3*bandwidth:4*bandwidth]=self.new_yfft[3*bandwidth:4*bandwidth]*self.sl4.value()
         self.label_16.setText(str(4*bandwidth))
-        band5=self.yfft[4*bandwidth:5*bandwidth]*self.sl5.value()
+        self.new_yfft[4*bandwidth:5*bandwidth]=self.new_yfft[4*bandwidth:5*bandwidth]*self.sl5.value()
         self.label_17.setText(str(5*bandwidth))
-        band6=self.yfft[5*bandwidth:6*bandwidth]*self.sl6.value()
+        self.new_yfft[5*bandwidth:6*bandwidth]=self.new_yfft[5*bandwidth:6*bandwidth]*self.sl6.value()
         self.label_18.setText(str(6*bandwidth))
-        band7=self.yfft[6*bandwidth:7*bandwidth]*self.sl7.value()
+        self.new_yfft[6*bandwidth:7*bandwidth]=self.new_yfft[6*bandwidth:7*bandwidth]*self.sl7.value()
         self.label_19.setText(str(7*bandwidth))
-        band8=self.yfft[7*bandwidth:8*bandwidth]*self.sl8.value()
+        self.new_yfft[7*bandwidth:8*bandwidth]=self.new_yfft[7*bandwidth:8*bandwidth]*self.sl8.value()
         self.label_20.setText(str(8*bandwidth))
-        band9=self.yfft[8*bandwidth:9*bandwidth]*self.sl9.value()
+        self.new_yfft[8*bandwidth:9*bandwidth]=self.new_yfft[8*bandwidth:9*bandwidth]*self.sl9.value()
         self.label_21.setText(str(9*bandwidth))
-        band10=self.yfft[9*bandwidth:10*bandwidth]*self.sl10.value()
+        self.new_yfft[9*bandwidth:10*bandwidth]=self.new_yfft[9*bandwidth:10*bandwidth]*self.sl10.value()
         self.label_22.setText(str(10*bandwidth))
-        self.new_yfft=np.concatenate([band1,band2,band3,band4,band5,band6,band7,band8,band9,band10])
+        # self.new_yfft=np.concatenate([band1,band2,band3,band4,band5,band6,band7,band8,band9,band10])
         self.newsignal()
 
         # print(band1,self.yfft_abs[0:bandwidth])
-
+        
+        # fig=plot.figure()
+        plot.close()
+        plot.clf()
         # plot.subplot(2,2,1)
         # plot.plot(self.xfft,abs(self.yfft))
         # plot.title("oldfft")
         # plot.subplot(2,2,2)
-        # plot.plot(self.xfft[1:],abs(self.new_yfft))
+        # plot.plot(self.xfft,abs(self.new_yfft))
         # plot.title("newfft")
         # plot.show()
       
     def newsignal(self):
         
-        # mag= np.abs(self.new_yfft)
-        # phase= np.angle(self.new_yfft)
-        # mod_wave=np.multiply(mag,np.exp(1j*phase))
-        # self.signal=ifft(mod_wave)
-
-        # xf = fftshift(fftfreq(len(xt), d=(xt[0]-xt[1])/(2*np.pi)))
-        # t=np.arange(len(self.signal))
+        mag= np.abs(self.new_yfft)
+        phase= np.angle(self.new_yfft)
+        mod_wave=np.multiply(mag,np.exp(1j*phase))
+        self.signal=ifft(mod_wave)
         pen = pg.mkPen(color=(255, 255, 255))
         self.sc2.clear()
-        self.sc.clear()
-        self.signal=ifft(self.new_yfft)
-        mag= np.abs(self.signal)
-        phase= np.angle(self.signal)
-        mod_wave=np.multiply(mag,np.exp(1j*phase))
-        self.sc2.plot(mod_wave[0:].real, pen=pen)
-        # self.sc2.plot(self.signal.real, pen=pen)
-        self.sc.plot(self.audio2[0:], pen=pen)
+        # self.sc.clear()
+
+        # self.signal=ifft(self.new_yfft)
+        # mag= np.abs(self.signal)
+        # phase= np.angle(self.signal)
+        # mod_wave=np.multiply(mag,np.exp(1j*phase))
+        # self.sc2.plot(mod_wave[0:].real, pen=pen)
+
+        self.sc2.plot(self.signal.real, pen=pen)
+        # self.sc.plot(self.audio2[0:], pen=pen)
         fig = plot.figure()
         self.powerSpectrum, self.freqenciesFound, self.time, self.imageAxis = plot.specgram(self.signal[0:].real, Fs=self.samplingrate,cmap=self.cmap)
-        plot.colorbar()
+        # plot.colorbar()
+        plot.ylim(self.min_freq.value(),self.max_freq.value())
         plot.xlabel('Time')
         plot.ylabel('Frequency')
         fig.savefig('plot.png')
+        plot.close()
         self.upload()
         # sf.write('sound.wav',self.signal.real, self.samplingrate)
         # wave_obj = sa.WaveObject.from_wave_file("sound.wav")
         # play_obj = wave_obj.play()
 
- # def changefreq(self):
-    #     if self.max_freq.value()> self.min_freq.value():
-    #         fig = plot.figure()
-    #         plot.subplot(111)
-    #         self.powerSpectrum, self.freqenciesFound, self.time, self.imageAxis = plot.specgram(self.audio2, Fs=self.samplingrate, cmap=self.cmap, vmin= self.min_freq.value(), vmax=self.max_freq.value())
-    #         # self.powerSpectrum, self.freqenciesFound, self.time, self.imageAxis = plot.specgram(self.audio2, Fs=self.samplingrate, cmap=self.cmap)
-    #         # plot.ylim[self.min_freq.value(),self.max_freq.value()]
-    #         plot.xlabel('Time')
-    #         plot.ylabel('Frequency')
-    #         plot.colorbar()
-    #         fig.savefig('plot.png')
-    #         self.upload()
-    #     else:
-    #         pass
+    def changefreq(self):
+        max= self.max_freq.value()
+        min=self.min_freq.value()
+        if max> min:
+            plot.close()
+            fig = plot.figure()
+            plot.subplot(111)
+            self.powerSpectrum, self.freqenciesFound, self.time, self.imageAxis = plot.specgram(self.signal[0:].real, Fs=self.samplingrate,cmap=self.cmap)
+            plot.ylim(min,max)
+            plot.xlabel('Time')
+            plot.ylabel('Frequency')
+            # plot.colorbar()
+            fig.savefig('plot.png')
+            plot.close()
+            self.upload()
+        else:
+            pass
   
 
 class sigviewer(QMainWindow,From_Main1):
