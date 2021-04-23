@@ -30,14 +30,13 @@ from scipy.signal import firwin , freqz
 from scipy.fft import rfft, rfftfreq ,fft, fftfreq ,ifft
 from matplotlib import cm
 from matplotlib.colors import ListedColormap, LinearSegmentedColormap
-import simpleaudio as sa
-import soundfile as sf
+# import simpleaudio as sa
+# import soundfile as sf
 
 
         
 scriptDir=dirname(realpath(__file__))
 From_Main,_ = loadUiType(join(dirname(__file__),"main.ui"))
-From_Main1,_= loadUiType(join(dirname(__file__),"task1.ui"))
 From_Main2,_ = loadUiType(join(dirname(__file__),"main2.ui"))
 
     
@@ -54,140 +53,19 @@ class WINDOW(QMainWindow,From_Main2):
     def create_MenuBar(self):
         menuBar = self.menuBar()
         self.setMenuBar(menuBar)
-        # self.menuBar.setShortcut("Alt")
-        #        menubar file
         file_menu = menuBar.addMenu('file')
         
-        # newAction=QAction(QIcon("icon.png"), "Sigviewer", self)
-        # file_menu.addAction(newAction)
-        # newAction.triggered.connect(self.viewsigviewer)
-        # newAction.setShortcut("Alt+shift+n")
-
         newwAction=QAction(QIcon("Equalizer.png"), "Equalizer", self)
         file_menu.addAction(newwAction)
         newwAction.triggered.connect(self.newwindow)
         newwAction.setShortcut("Alt+n")
         
-        open_action= QAction(QIcon("open.png"),"open File", self)
-        file_menu.addAction(open_action)
-        open_action.setShortcut("Alt+O")
-        # open_action.triggered.connect(self.OpenBrowse)
-
         closeAction=QAction(QIcon("close.png"), "Close", self)
         file_menu.addAction(closeAction)
         closeAction.triggered.connect(self.close)
         closeAction.setShortcut("Ctrl+Q")
         
-        # menubar  edit
-        edit_menu = menuBar.addMenu('edit')
-                
-        undoAction=QAction(QIcon("undo.png"), "Undo", self)
-        edit_menu.addAction(undoAction)
-
-        redoAction =QAction(QIcon("redo.png"), "Redo", self)
-        edit_menu.addAction(redoAction)
-
-        toallAction =QAction(QIcon("to_all.png"), "to All Channels", self)
-        edit_menu.addAction(toallAction)
-                
-        copyAction =QAction(QIcon("copy.png"), "Copy to Channels...", self)
-        edit_menu.addAction(copyAction)
-
-        deleteAction =QAction(QIcon("delete.png"), "Delete", self)
-        edit_menu.addAction(deleteAction)
         
-        changeAction =QAction(QIcon("change.png"), "Change Channel...", self)
-        edit_menu.addAction(changeAction)
-
-        typeAction =QAction(QIcon("color.png"), "Change Type", self)
-        edit_menu.addAction(typeAction)
-
-        insertAction =QAction(QIcon("add.png"), "Insert Over", self)
-        edit_menu.addAction(insertAction)
-
-        edit_menu.addAction('Quit',self.close)
-                
-        # menubar  mode
-        mode_menu = menuBar.addMenu('mode')
-
-        newAction =QAction(QIcon("new event.png"), "New Event", self)
-        mode_menu.addAction(newAction)
-
-        editAction =QAction(QIcon("edit.png"), "Edit Event", self)
-        mode_menu.addAction(editAction)
-        scrollAction =QAction(QIcon("scroll.png"), "Scroll", self)
-        mode_menu.addAction(scrollAction)
-
-        viewAction =QAction(QIcon("view.png"), "View Options", self)
-        mode_menu.addAction(viewAction)
-
-        
-        # menubar  view
-        view_menu = menuBar.addMenu('view')
-
-        toolbarAction =QAction("Toolbars", self)
-        view_menu.addAction(toolbarAction)
-
-        statusAction =QAction( "Statusbar", self)
-        view_menu.addAction(statusAction)
-
-        animationAction =QAction( "Animation", self)
-        view_menu.addAction(animationAction)
-
-        eveAction =QAction(QIcon("favourite.png"), "Events...", self)
-        view_menu.addAction(eveAction)
-
-        channAction =QAction(QIcon("channels.png"), "Channels...", self)
-        view_menu.addAction(channAction)        
-
-        scaleAction =QAction("Scale All", self)
-        view_menu.addAction(scaleAction)
-
-        zoominvAction =QAction(QIcon("zoomin.png"), "Zoom In Vertical", self)
-        view_menu.addAction(zoominvAction)
-
-        zoomoutvAction =QAction(QIcon("zoom out.png"), "Zoom Out Vertical", self)
-        view_menu.addAction(zoomoutvAction)
-
-        zoominhAction =QAction(QIcon("zoomin.png"), "Zoom In Horizontal", self)
-        view_menu.addAction(zoominhAction)
-
-        zoomouthAction =QAction(QIcon("zoom out.png"), "Zoom Out Horizontal", self)
-        view_menu.addAction(zoomouthAction)
-
-        gotoAction =QAction(QIcon("goto.png"), "Go to...", self)
-        view_menu.addAction(gotoAction)
-
-        gonextAction =QAction( "Goto and Select Next Event", self)
-        view_menu.addAction(gonextAction)
-
-        goprevAction =QAction("Goto and Select Previos Evenet", self)
-        view_menu.addAction(goprevAction)
-
-        fitAction =QAction("Fit View to selected Event", self)
-        view_menu.addAction(fitAction)
-
-        hideAction =QAction("Hide Events of Other Type", self)
-        view_menu.addAction(hideAction)
-
-        showAction =QAction("Show All Events", self)
-        view_menu.addAction(showAction)    
-
-        
-        # menubar  tools
-        tools_menu = menuBar.addMenu('tools')
-        
-        calcAction =QAction("Calculate Mean...", self)
-        tools_menu.addAction(calcAction)
-
-        powerAction =QAction("Power Spectrum...", self)
-        tools_menu.addAction(powerAction)
-
-        
-        # menubar  help
-        help_menu = menuBar.addMenu('help')
-        help_menu.addAction('Quit',self.close)       
-   
     def newwindow(self):
         new= mainwind()
         new.show()
@@ -339,7 +217,7 @@ class mainwind(QMainWindow,From_Main):
 
         self.colorPalette= QtWidgets.QComboBox()
         self.colorPalette.setGeometry(700, 40 , 500, 28)
-        self.colorPalette.addItem("virdis")
+        self.colorPalette.addItem("viridis")
         self.colorPalette.addItem('Spectral_r')
         self.colorPalette.addItem("gnuplot2")
         self.colorPalette.addItem("Greys")
@@ -372,15 +250,8 @@ class mainwind(QMainWindow,From_Main):
         
         menuBar = self.menuBar()
         self.setMenuBar(menuBar)
-        # self.menuBar.setShortcut("Alt")
-        #        menubar file
         file_menu = menuBar.addMenu('file')
         
-        # newAction=QAction(QIcon("icon.png"), "Sigviewer", self)
-        # file_menu.addAction(newAction)
-        # newAction.triggered.connect(self.viewsigviewer)
-        # newAction.setShortcut("Alt+shift+n")
-
         newwAction=QAction(QIcon("Equalizer.png"), "Equalizer", self)
         file_menu.addAction(newwAction)
         newwAction.triggered.connect(self.newwindow)
@@ -546,7 +417,7 @@ class mainwind(QMainWindow,From_Main):
                 self.yfft=fft(self.audio2)
                 self.yfft_abs=np.abs(self.yfft)
                 self.xfft=fftfreq(l,t)
-                wave_obj = sa.WaveObject.from_wave_file(self.fileName)
+                # wave_obj = sa.WaveObject.from_wave_file(self.fileName)
                 # play_obj = wave_obj.play()
                 self.bandwidthedit()    
                         
@@ -647,14 +518,15 @@ class mainwind(QMainWindow,From_Main):
     def combbox(self):
         self.cmap= cm.get_cmap(str(self.colorPalette.currentText()))
         self.valuechange()
-        
+        self.changefreq()
+
     def spectrogram(self):
         #plotting the spectrogram for .wav####
         if self.fileName.endswith(".wav"):
             fig = plot.figure()
             plot.subplot(111)
             self.powerSpectrum, self.freqenciesFound, self.time, self.imageAxis = plot.specgram(self.audio2, Fs=self.samplingrate, cmap=self.cmap)
-            # plot.colorbar()
+            plot.colorbar()
             # plot.ylim(self.min_freq_slider.value(),self.max_freq_slider.value())
             plot.xlabel('Time')
             plot.ylabel('Frequency')
@@ -708,14 +580,16 @@ class mainwind(QMainWindow,From_Main):
         self.label.setScaledContents(True)
 
     def savepdf(self):
-        # self.newsignal()
+        self.combbox()
         fig=plot.figure()
         # plot.subplot(2,1,1)
         # plot.plot(self.audio2[0:],color='black',linewidth=0.005,scalex=True)
         # plot.title("before")
         plot.subplot(2,1,2)
-        self.powerSpectrum, self.freqenciesFound, self.time, self.imageAxis = plot.specgram(self.signal[0:].real, Fs=self.samplingrate,cmap=self.cmap)
-        # plot.colorbar()
+        max= self.max_freq_slider.value()
+        min=self.min_freq_slider.value()
+        self.powerSpectrum, self.freqenciesFound, self.time, self.imageAxis = plot.specgram(self.signal.real, Fs=self.samplingrate,cmap=self.cmap, vmin=min, vmax=max)
+        plot.colorbar()
         plot.xlabel('Time')
         plot.ylabel('Frequency')
         plot.subplot(2,1,1)
@@ -749,6 +623,8 @@ class mainwind(QMainWindow,From_Main):
         for i in np.arange(10):
             self.new_yfft[i*bandwidth:(i+1)*bandwidth]=self.new_yfft[i*bandwidth:(i+1)*bandwidth]*self.sliders_list[i]
         self.newsignal()   
+        self.changefreq()
+
 
         # fig=plot.figure()
         # plot.close()
@@ -785,7 +661,7 @@ class mainwind(QMainWindow,From_Main):
         min=self.min_freq_slider.value()
         fig = plot.figure()
         self.powerSpectrum, self.freqenciesFound, self.time, self.imageAxis = plot.specgram(self.signal.real, Fs=self.samplingrate,cmap=self.cmap,vmin=min,vmax=max)
-        # plot.colorbar()
+        plot.colorbar()
         # plot.ylim(min,max)
         plot.xlabel('Time')
         plot.ylabel('Frequency')
@@ -797,8 +673,10 @@ class mainwind(QMainWindow,From_Main):
         # play_obj = wave_obj.play()
 
     def changefreq(self):
+        self.newsignal()
         max= self.max_freq_slider.value()
         min=self.min_freq_slider.value()
+        
         if max> min:
             plot.close()
             fig = plot.figure()
@@ -808,7 +686,7 @@ class mainwind(QMainWindow,From_Main):
             
             plot.xlabel('Time')
             plot.ylabel('Frequency')
-            # plot.colorbar()
+            plot.colorbar()
             fig.savefig('plot.png')
             plot.close()
             self.upload()
