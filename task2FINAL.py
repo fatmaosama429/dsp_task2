@@ -214,6 +214,7 @@ class mainwind(QMainWindow,From_Main):
         self.y2=[]
         self.cmap= None
         self.speed= 100
+        self.signal=np.array([])
 
         self.l=QVBoxLayout(self.graphicsView)
         self.l.setGeometry(QtCore.QRect(10, 5, 571, 150))
@@ -569,15 +570,15 @@ class mainwind(QMainWindow,From_Main):
         fmax=self.samplingrate/2
         arr= np.arange(1,(fmax+1) , 1)
         self.array= arr[::-1]
-        logal = -20* (np.log10(self.array/(fmax)))
+        logal = -20* (np.log10(self.array/int(fmax)))
         
-        self.min_freq_slider.setMinimum(logal[0])
-        self.min_freq_slider.setMaximum(logal[-1])
-        self.max_freq_slider.setMinimum(logal[0])
-        self.max_freq_slider.setMaximum(logal[-1])
+        self.min_freq_slider.setMinimum(int(logal[0]))
+        self.min_freq_slider.setMaximum(int(logal[-1]))
+        self.max_freq_slider.setMinimum(int(logal[0]))
+        self.max_freq_slider.setMaximum(int(logal[-1]))
 
-        self.max_freq_slider.setValue(logal[-1])
-        self.min_freq_slider.setValue(0)
+        self.max_freq_slider.setValue(int(logal[-1]))
+        self.min_freq_slider.setValue(int(logal[0]))
 
         self.min_freq_slider.setSingleStep(int(logal[-1]/10))
         self.max_freq_slider.setSingleStep(int(logal[-1]/10))
@@ -783,7 +784,7 @@ class mainwind(QMainWindow,From_Main):
         max= self.max_freq_slider.value()
         min=self.min_freq_slider.value()
         fig = plot.figure()
-        self.powerSpectrum, self.freqenciesFound, self.time, self.imageAxis = plot.specgram(self.signal.real, Fs=self.samplingrate,cmap=self.cmap)
+        self.powerSpectrum, self.freqenciesFound, self.time, self.imageAxis = plot.specgram(self.signal.real, Fs=self.samplingrate,cmap=self.cmap,vmin=min,vmax=max)
         # plot.colorbar()
         # plot.ylim(min,max)
         plot.xlabel('Time')
